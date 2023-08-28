@@ -47,8 +47,10 @@ export default {
     signIn () {
       console.log('login')
       const api = `${process.env.VUE_APP_API}admin/signin`
+      this.isLoading = true
       // $http就是axios；使用axios調用post方法(api路徑,夾帶要送的資料)
       this.$http.post(api, this.user).then((res) => {
+        this.isLoading = false
         // 如果登入成功，就轉到dashboard頁面
         if (res.data.success) {
           // 伺服器回傳的資料，取出必要元素製作cookie

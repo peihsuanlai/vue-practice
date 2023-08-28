@@ -22,7 +22,7 @@
             <label for="customFile" class="form-label">或 上傳圖片
               <i class="fas fa-spinner fa-spin"></i>
             </label>
-            <input type="file" id="customFile" class="form-control">
+            <input type="file" id="customFile" class="form-control" @change="uploadFile" ref="fileInput">
           </div>
           <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
           <!-- 延伸技巧，多圖 -->
@@ -113,7 +113,7 @@
 
 <script>
 // 調用 BS 方法，必須先 modal 相關的方法 import 進來
-import Modal from 'bootstrap/js/dist/modal'
+import modalMixin from '@/mixins/modalMixin'
 export default {
   props: {
     // 外層 tempProduct 傳進來的資料透過 props product 接收
@@ -142,18 +142,24 @@ export default {
   },
   // 新增方法讓外部元件可以呼叫它
   methods: {
-    showModal () {
-      this.modal.show() // BS 本身已經訂好的方法
-    },
-    hideModal () {
-      this.modal.hide()
+    uploadFile () {
+      // 取得 input dom 元素的 file 屬性，可用 console.dir(this.$refs.fileInput)查看
+      console.dir(this.$refs.fileInput)
+      const uploadedFile = this.$refs.fileInput.files[0]
+      // 轉成 formdata 的格式
+      const formData = new FormData()
+      // 增加一個欄位到表單裡；表單有一個name屬性的值為 file-to-upload，所帶的內容為我們取到的檔案
+      formData.append('file-to-upload', uploadedFile)
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/upload`
+      this.$http.post(url, formData).then((res) => {
+        // res.data 會獲得圖片上傳至伺服器儲存的路徑 imageUrl
+        if (res.data.success) {
+          this.tempProduct.imageUrl = res.data.imageUrl
+        }
+      }
+      )
     }
   },
-  mounted () {
-  // 元件載入後對它進行建立實體 (建立modal實體)
-  // 透過 ref 方式直接存取 dom 元素
-  // 指向 modal 元素
-    this.modal = new Modal(this.$refs.modal)
-  }
+  mixins: [modalMixin]
 }
 </script>
