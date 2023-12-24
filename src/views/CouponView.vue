@@ -93,6 +93,7 @@ export default {
     },
     openCouponModal (isNew, coupon) {
       if (isNew) {
+        // 取得當下時間，並轉換時間為(毫秒)
         this.tempCoupon = { due_date: new Date().getTime() / 1000 }
       } else {
         this.tempCoupon = { ...coupon }

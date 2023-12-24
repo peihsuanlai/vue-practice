@@ -21,7 +21,7 @@
             </div>
             <div class="mb-3">
               <label for="due_date">到期日</label>
-              <input type="date" class="form-control" id="due_date" v-model="tempCoupon.due_date">
+              <input type="date" class="form-control" id="due_date" v-model="due_date">
             </div>
             <div class="mb-3">
               <label for="price">折扣百分比</label>
@@ -78,12 +78,15 @@ export default {
   watch: {
     coupon () {
       this.tempCoupon = this.coupon
-      // 將時間格式改為 YYYY-MM-DD
+      // 將時間格式改為 YYYY-MM-DD //將 due_date 轉成符合 Modal 的格式（yyyy-mm-dd)
       console.log(this.tempCoupon.due_date)
+      // 要讓 input 的日期能正確顯示，需要將時間的格式轉成 YYYY-MM-DD 因此會乘以 1000
       const dateAndTime = new Date(this.tempCoupon.due_date * 1000).toISOString().split('T')
-      [this.due_date] = dateAndTime
+      console.log(dateAndTime)
+      this.due_date = dateAndTime[0]
     },
     due_date () {
+      // 將 due_date 轉成適合父元件儲存的格式（1695427200） 為了能夠保留原本的格式，所以要除 1000 回來
       this.tempCoupon.due_date = Math.floor(new Date(this.due_date) / 1000)
     }
   },
